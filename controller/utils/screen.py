@@ -3,6 +3,8 @@ from PyQt5.QtGui import QPixmap, QImage, QScreen, QColor
 from PyQt5.QtWidgets import QApplication
 from time import time
 
+LIMIT = 4
+
 class Screen():
   __lastGrab = 0
   
@@ -18,7 +20,6 @@ class Screen():
     self.blockDim = ( self.screen.availableGeometry().width() // matrix[0], self.screen.availableGeometry().height() // matrix[1] )
     self.blocksGeo = self.__computeBlocksGeo(matrix,leds,leds_offset)
     self.scaleCount = self.__findScalerCount()
-    #TODO check if all blocks are in matrix
 
   def __findScaler(self,curr,expected):
     eq = float(expected)/float(curr)
@@ -84,14 +85,21 @@ class Screen():
     return pix.toImage()
 
   def pixelize(self,image):
-    for i in range(self.scaleCount):
-      image = image.scaled(image.width() // 2, image.height() // 2, transformMode=1) 
+    if len(self.blocksGeo) <= LIMIT:
+      count = self.scaleCount
+    else:
+      count = self.scaleCount + 1
+    for i in range(count):
+      image = image.scaled(image.width() // 2, image.height() // 2, transformMode=1)
     return QColor(image.pixel(0,0)).getRgb()[:-1] 
 
   def compute(self):
     arr = []
     image = self.grab()
     for x,y in self.blocksGeo:
-      img = image.copy(x,y,self.blockDim[0],self.blockDim[1])
+      if len(self.blocksGeo) <= LIMIT:
+        img = image.copy(x,y,self.blockDim[0],self.blockDim[1])
+      else:
+        img = image.copy(x+self.blockDim[0]//2,y+self.blockDim[1]//2,self.blockDim[0]*2,self.blockDim[1]*2)
       arr.append(self.pixelize(img))
     return arr

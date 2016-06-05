@@ -172,6 +172,18 @@ class Ambilight(object):
           c[j] += steps[j]
         self.allColor(c)
   
+  def limit(self,rgb,rgb_max=(254,254,254),rgb_min=(10,10,10)):
+    new = []
+    for i in range(3):
+      if rgb[i] > rgb_min[i]:
+        if rgb[i] < rgb_max[i]:
+          new.append(rgb[i])
+        else:
+          new.append(rgb_max[i])
+      else:
+        new.append(rgb_min[i])
+    return tuple(new)
+
   def edgeScreen(self,screen_name,fps=60):
     if NO_QT:
       print("Cannot find PyQT5. Exiting...")
@@ -185,7 +197,7 @@ class Ambilight(object):
       scr.grab()
       arr = scr.compute()
       for rgb in arr:
-        self.serial.write(rgb)
+        self.serial.write(self.limit(rgb))
       self.serial.sync()
       tend = time.time()
       wait = interval - (tend - tstart)
