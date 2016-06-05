@@ -1,0 +1,3 @@
+[submodule "digispark_ambilight/DigistumpArduino"]
+	path = digispark_ambilight/DigistumpArduino
+	url = https://github.com/digistump/DigistumpArduino.git
