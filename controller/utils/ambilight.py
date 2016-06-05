@@ -16,7 +16,8 @@ class Ambilight(object):
   ledArray  = (1,1,1,1)
   ledOffset = (0,0,0,0)
 
-  def __init__(self,leds_array=[1],port='/dev/ambilight'):
+  def __init__(self,leds_array=[1],port='/dev/ambilight',minRGB=(10,10,9),maxRGB=(254,254,254)):
+    self.threshold = (minRGB,maxRGB)
     self.__parseLedsArray(leds_array)
     for i in range(60):
       try:
@@ -69,9 +70,20 @@ class Ambilight(object):
           if leds_array[led][side] == 'L': array[i] += 1
           else: break 
           led += 1
-
     self.ledArray=tuple(array)
     self.ledOffset=tuple(offset)
+
+  def __limit(self,rgb):
+    new = []
+    for i in range(3):
+      if rgb[i] > self.threshold[0][i]:
+        if rgb[i] < self.threshold[1][i]:
+          new.append(rgb[i])
+        else:
+          new.append(self.threshold[1][i])
+      else:
+        new.append(self.threshold[0][i])
+    return tuple(new)
 
   def allColor(self,rgb):
     for i in range(self.leds):
@@ -170,20 +182,8 @@ class Ambilight(object):
       for i in range(count):
         for j in range(3):
           c[j] += steps[j]
-        self.allColor(c)
+        self.allColor(self.__limit(c))
   
-  def limit(self,rgb,rgb_max=(254,254,254),rgb_min=(10,10,10)):
-    new = []
-    for i in range(3):
-      if rgb[i] > rgb_min[i]:
-        if rgb[i] < rgb_max[i]:
-          new.append(rgb[i])
-        else:
-          new.append(rgb_max[i])
-      else:
-        new.append(rgb_min[i])
-    return tuple(new)
-
   def edgeScreen(self,screen_name,fps=60):
     if NO_QT:
       print("Cannot find PyQT5. Exiting...")
@@ -197,7 +197,7 @@ class Ambilight(object):
       scr.grab()
       arr = scr.compute()
       for rgb in arr:
-        self.serial.write(self.limit(rgb))
+        self.serial.write(self.__limit(rgb))
       self.serial.sync()
       tend = time.time()
       wait = interval - (tend - tstart)
