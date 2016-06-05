@@ -60,7 +60,7 @@ if __name__ == '__main__':
       print("Seconds not spocified")
       sys.exit(1)
     ambilight.countdown(sec,input3(255,0,0,start=3))
-  elif sel == 'rainbow' or sel == 'spectrum' or sel == 'gey' or sel == 'gay':
+  elif sel == 'rainbow' or sel == 'spectrum':
     try:
       if sys.argv[2].lower() == 'circular':
         ambilight.move_rainbow(True)
