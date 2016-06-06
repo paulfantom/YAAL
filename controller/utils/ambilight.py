@@ -21,8 +21,8 @@ class Ambilight(object):
     self.__parseLedsArray(leds_array)
     for i in range(60):
       try:
-        #self.serial = AmbilightSerial(leds=self.leds, port=port, baudrate=115200, write_timeout=1)
-        self.serial = AmbilightSerial(leds=self.leds, port=port, baudrate=115200)
+        #self.serial = AmbilightSerial(leds=self.leds, port=port, write_timeout=1)
+        self.serial = AmbilightSerial(leds=self.leds, port=port)
         break
       except OSError:
         if i == 0:
