@@ -104,7 +104,8 @@ void DigiCDCDevice::task(void)
 
 void DigiCDCDevice::refresh(void)
 {    
-  _delay_ms(1);
+  //_delay_ms(1);
+  _delay_us(500);
   usbPollWrapper();
 }
 
