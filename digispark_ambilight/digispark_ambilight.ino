@@ -1,26 +1,22 @@
-#include <WS2812.h>
 #include <DigiCDC.h>
+#include <Adafruit_NeoPixel.h>
 
 static const int LED_COUNT = 30;
 static const int LED_PIN = 1;
 static int IDX = 0;
 static int pos = 0;
 
-WS2812 LEDS(LED_COUNT);
-cRGB value;
+Adafruit_NeoPixel LEDS = Adafruit_NeoPixel(LED_COUNT, LED_PIN, NEO_GRB + NEO_KHZ800);
 
 void setup() {
+  LEDS.begin();
   SerialUSB.begin();
-  LEDS.setOutput(LED_PIN);
 
-  // set all to very light white
-  value.b = 0; value.g = 20; value.r = 0;
+  // set all to low red light
   for (int i = 0; i < LED_COUNT; i++) {
-    LEDS.set_crgb_at(i, value);
-    LEDS.sync();
+    LEDS.setPixelColor(i, LEDS.Color(30,0,0));
+    LEDS.show();
   }
-  value.b = 20; value.g = 0; value.r = 0;
-  LEDS.set_crgb_at(IDX, value);
 }
 
 void loop() {
@@ -33,25 +29,28 @@ void loop() {
 }
 
 void parseBytes(int numBytes) {
+  uint8_t red = 0;
+  uint8_t grn = 0;
+  uint8_t blu = 0;
   while (numBytes--) {
     byte val = SerialUSB.read();
     if (val == 0xFF) {
       IDX = 0;
       pos = 0;
-      LEDS.sync();
+      LEDS.show();
     }
     else {
       switch(pos++) {
         case 0:
-        value.r = val;
+        red = val;
         break;
         case 1:
-        value.g = val;
+        grn = val;
         break;
         case 2:
-        value.b = val;
+        blu = val;
         pos = 0;
-        LEDS.set_crgb_at(IDX++, value);
+        LEDS.setPixelColor(IDX++, LEDS.Color(red,grn,blu));
         break;
       }
     }
