@@ -16,9 +16,9 @@ LED_ARRAY=[
 SCREEN='DP1-1'
 DEVICE="/dev/ambilight"
 
-MIN_RGB=(9,8,4)
-#MAX_RGB=(254,220,160)
-MAX_RGB=(254,220,120)
+MIN_RGB=(4,4,4)
+##MAX_RGB=(254,254,140)  #Belinea "<F11>low blue light -60%"
+MAX_RGB=(254,254,254)
 
 def input3(d1=0,d2=0,d3=0,start=2,normalize=int):
   ret = [d1,d2,d3]
