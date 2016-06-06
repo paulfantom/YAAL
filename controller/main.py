@@ -74,6 +74,16 @@ if __name__ == '__main__':
     ambilight.screenSmoothFlow(SCREEN)
   elif sel == 'edge' or sel == 'movie':
     ambilight.edgeScreen(SCREEN)
+  elif sel == 'speedtest':
+    import time
+    i = 0
+    t1 = time.time()
+    t2 = time.time()
+    while (t2 - t1) < 60:
+      ambilight.allColor((((20*i)%254),0,0))
+      i += 1
+      t2 = time.time()
+    print("FPS: "+str(round(i/60.0,2)))
   else:
     print("Following options are available:")
     print("  off                                    - disable all LEDs")
@@ -86,4 +96,5 @@ if __name__ == '__main__':
     print("  rainbow/spectrum [circular/hasselhoff] - show rainbow")
     print("  kit/knight/hasselhoff                  - K.I.T. from 'Knight Rider'")
     print("  countdown SECONDS [red] [green] [blue] - fancy countdown")
+#    print("  speedtest                              - test connection speed")
 
