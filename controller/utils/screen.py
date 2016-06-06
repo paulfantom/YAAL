@@ -100,6 +100,6 @@ class Screen():
       if len(self.blocksGeo) <= LIMIT:
         img = image.copy(x,y,self.blockDim[0],self.blockDim[1])
       else:
-        img = image.copy(x+self.blockDim[0]//2,y+self.blockDim[1]//2,self.blockDim[0]*2,self.blockDim[1]*2)
+        img = image.copy(x-self.blockDim[0]//2,y-self.blockDim[1]//2,self.blockDim[0]*2,self.blockDim[1]*2)
       arr.append(self.pixelize(img))
     return arr
