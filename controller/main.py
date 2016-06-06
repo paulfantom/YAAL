@@ -16,6 +16,10 @@ LED_ARRAY=[
 SCREEN='DP1-1'
 DEVICE="/dev/ambilight"
 
+MIN_RGB=(10,10,9)
+#MAX_RGB=(254,220,160)
+MAX_RGB=(254,220,120)
+
 def input3(d1=0,d2=0,d3=0,start=2,normalize=int):
   ret = [d1,d2,d3]
   for i in range(3):
@@ -71,8 +75,10 @@ if __name__ == '__main__':
     except IndexError:
       ambilight.rainbow()
   elif sel == 'avg' or sel == 'mean':
+    ambilight.setMinMax(MIN_RGB,MAX_RGB)
     ambilight.screenSmoothFlow(SCREEN)
   elif sel == 'edge' or sel == 'movie':
+    ambilight.setMinMax(MIN_RGB,MAX_RGB)
     ambilight.edgeScreen(SCREEN)
   elif sel == 'speedtest':
     import time

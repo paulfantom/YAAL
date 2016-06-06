@@ -27,6 +27,10 @@ Setup
 5. Copy `50-ambilight.rules` to `/etc/udev/rules.d/` or change `DEVICE` variable in `main.py` to serial port on which program will communicate with Digistump
 6. Connect Digistump, wait couple of seconds, and run `main.py`
 
+Callibration
+------------
+Use variables `MIN_RGB` and `MAX_RGB` in `main.py` to set minimum and maximum values for each color.
+
 Usage
 -----
 Run: `python2 main.py COMMAND` where `COMMAND` is one of the following:
