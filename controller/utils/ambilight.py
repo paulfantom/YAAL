@@ -79,9 +79,12 @@ class Ambilight(object):
   def setMinMax(self,minRGB=(0,0,0),maxRGB=(254,254,254)):
     self.thMult = [ ((maxRGB[i]-minRGB[i])/255.0, minRGB[i]) for i in range(3) ]
 
-  def allColor(self,rgb):
+  def allColor(self,rgb,normalized=False):
+    if normalized:
+      rgb = self.__normalize(rgb)
+    write = self.serial.write
     for i in range(self.leds):
-      self.serial.write(rgb)
+      write(rgb)
     self.serial.sync()
 
   def off(self):
@@ -106,24 +109,30 @@ class Ambilight(object):
         pos-=1
   
   def kit(self,color):
-    while True:
-      self.one_by_one(color)
-      self.one_by_one(color,False,self.leds-1)
+    try:
+      while True:
+        self.one_by_one(color)
+        self.one_by_one(color,False,self.leds-1)
+    except KeyboardInterrupt:
+      print("Exiting...")
 
   def countdown(self,seconds,color):
     steps = self.leds // 2
     interval = seconds / steps
     pos = 0
-    for step in range(steps):
-      for i in range(self.leds):
-        if pos == i or pos == self.leds-i-1:
-          self.serial.write(color)
-        else:
-          self.serial.write((0,0,0))
-      self.serial.sync()
-      pos+=1
-      time.sleep(interval)
-    self.allColor(color)
+    try:
+      for step in range(steps):
+        for i in range(self.leds):
+          if pos == i or pos == self.leds-i-1:
+            self.serial.write(color)
+          else:
+            self.serial.write((0,0,0))
+        self.serial.sync()
+        pos+=1
+        time.sleep(interval)
+      self.allColor(color)
+    except KeyboardInterrupt:
+      print("Exiting...")
   
   def rainbow(self):
     H = 0

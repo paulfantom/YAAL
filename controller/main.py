@@ -17,8 +17,8 @@ SCREEN='DP1-1'
 DEVICE="/dev/ambilight"
 
 MIN_RGB=(4,4,4)
-##MAX_RGB=(254,254,140)  #Belinea "<F11>low blue light -60%"
-MAX_RGB=(254,254,254)
+##MAX_RGB=(254,230,140)  #Belinea "low blue light -60%"
+MAX_RGB=(254,230,140)
 
 def input3(d1=0,d2=0,d3=0,start=2,normalize=int):
   ret = [d1,d2,d3]
@@ -46,7 +46,8 @@ if __name__ == '__main__':
       brightness = int(sys.argv[2])
     except IndexError:
       brightness = 254
-    ambilight.allColor((brightness,brightness,brightness))
+    ambilight.setMinMax(MIN_RGB,MAX_RGB)
+    ambilight.allColor((brightness,brightness,brightness),True)
   elif sel == 'hsi' or sel == 'hsv' or sel == 'hsl':
     ambilight.allColor(HSItoRGB(*(input3(300,1,1,normalize=float))))
   elif sel == 'fade':
@@ -74,12 +75,19 @@ if __name__ == '__main__':
         ambilight.rainbow()
     except IndexError:
       ambilight.rainbow()
+    except KeyboardInterrupt:
+      ambilight.off()
+      ambilight.allColor(MAX_RGB,True)
   elif sel == 'avg' or sel == 'mean':
     ambilight.setMinMax(MIN_RGB,MAX_RGB)
     ambilight.screenSmoothFlow(SCREEN)
   elif sel == 'edge' or sel == 'movie':
-    ambilight.setMinMax(MIN_RGB,MAX_RGB)
-    ambilight.edgeScreen(SCREEN)
+    try:
+      ambilight.setMinMax(MIN_RGB,MAX_RGB)
+      ambilight.edgeScreen(SCREEN)
+    except KeyboardInterrupt:
+      ambilight.off()
+      ambilight.allColor(MAX_RGB,True)
   elif sel == 'speedtest':
     import time
     i = 0
