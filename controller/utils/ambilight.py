@@ -153,7 +153,7 @@ class Ambilight(object):
     H = 0
     self.serial.sync()
     for led in range(self.leds):
-      c = HSItoRGB(H,1,1)
+      c = HSItoRGB(H,1,0.5)
       self.serial.write(c)
       H += 360 // self.leds
     self.serial.sync()
@@ -162,7 +162,7 @@ class Ambilight(object):
     arr = []
     H = 0 
     for led in range(self.leds):
-      arr.append(HSItoRGB(H,1,1))
+      arr.append(HSItoRGB(H,1,0.5))
       H += 360 // self.leds
   
     direction = True
