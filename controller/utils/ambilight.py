@@ -1,4 +1,5 @@
 #!/usr/bin/env python2
+import os
 import sys
 import time
 from utils.colors import HSItoRGB
@@ -133,7 +134,21 @@ class Ambilight(object):
       self.allColor(color)
     except KeyboardInterrupt:
       print("Exiting...")
-  
+
+  def sun(self, hue=30, rise_time=30):
+    hue = 30
+    max_luminosity = 0.55
+
+    steps = rise_time / 0.1
+    step = max_luminosity / steps
+    luminosity = 0
+    while luminosity < max_luminosity:
+      t1 = time.time()
+      luminosity += step
+      c = HSItoRGB(hue, 1, luminosity)
+      self.allColor(c, True)
+      time.sleep(0.1 - (time.time() - t1))
+
   def rainbow(self):
     H = 0
     self.serial.sync()
@@ -187,10 +202,21 @@ class Ambilight(object):
           c[j] += steps[j]
         self.allColor(self.__normalize(c))
   
-  def edgeScreen(self,screen_name,fps=60):
+  def edgeScreen(self,screen_name,app,fps=60):
     if NO_QT:
       print("Cannot find PyQT5. Exiting...")
       sys.exit(1)
+   
+    #get proc file
+    if app is not None:
+      try:
+        from subprocess import check_output
+        pid = int(check_output(["pidof","-s",app]))
+        proc_file = '/proc/' + str(pid)
+      except:
+        proc_file = None
+    else:
+      proc_file = None
     interval = 1/float(fps)
 #    scr = Screen(screen_name,grid)
     scr = Screen(screen_name,self.ledMatrix,self.ledArray,self.ledOffset)
@@ -202,6 +228,9 @@ class Ambilight(object):
       for rgb in arr:
         self.serial.write(self.__normalize(rgb))
       self.serial.sync()
+      if proc_file is not None:
+        if not os.path.exists(proc_file):
+          break
       tend = time.time()
       wait = interval - (tend - tstart)
       if wait > 0:

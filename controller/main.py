@@ -48,12 +48,23 @@ if __name__ == '__main__':
       brightness = 254
     ambilight.setMinMax(MIN_RGB,MAX_RGB)
     ambilight.allColor((brightness,brightness,brightness),True)
-  elif sel == 'hsi' or sel == 'hsv' or sel == 'hsl':
-    ambilight.allColor(HSItoRGB(*(input3(300,1,1,normalize=float))))
+  elif sel == 'hsi' or sel == 'hsl':
+    ambilight.setMinMax(MIN_RGB,MAX_RGB)
+    ambilight.allColor(HSItoRGB(*(input3(300,1,1,normalize=float))), True)
   elif sel == 'fade':
-    while True:
-      for H in range(360):
-        ambilight.allColor(HSItoRGB(H,1,1))
+    try:
+      while True:
+        for H in range(360):
+          ambilight.allColor(HSItoRGB(H,1,1))
+    except KeyboardInterrupt:
+      pass
+  elif sel == 'sun':
+    ambilight.setMinMax(MIN_RGB,MAX_RGB)
+    try:
+      rise = float(sys.argv[2])
+    except IndexError:
+      rise = 30*60
+    ambilight.sun(rise_time=rise)
   elif sel == 'led':
     ambilight.oneLED(int(sys.argv[2]),input3(254,0,0,start=3))
   elif sel == 'kit' or sel == 'knight' or sel == 'hasselhoff':
@@ -83,11 +94,16 @@ if __name__ == '__main__':
     ambilight.screenSmoothFlow(SCREEN)
   elif sel == 'edge' or sel == 'movie':
     try:
+      app = sys.argv[2].lower()
+    except:
+      app = None
+    try:
       ambilight.setMinMax(MIN_RGB,MAX_RGB)
-      ambilight.edgeScreen(SCREEN)
+      ambilight.edgeScreen(SCREEN, app)
     except KeyboardInterrupt:
-      ambilight.off()
-      ambilight.allColor(MAX_RGB,True)
+      pass
+    ambilight.off()
+    ambilight.allColor(MAX_RGB,True)
   elif sel == 'speedtest':
     import time
     i = 0
@@ -100,15 +116,17 @@ if __name__ == '__main__':
     print("FPS: "+str(round(i/60.0,2)))
   else:
     print("Following options are available:")
-    print("  off                                    - disable all LEDs")
-    print("  color/colour/rgb [red] [green [blue]   - set color")
-    print("  white [brightness]                     - light all leds with white color")
-    print("  led POS [red] [green] [blue]           - light one led at POSition")
-    print("  avg/mean                               - screen average color")
-    print("  edge/movie                             - screen edge color (ambilight)")
-    print("  fade                                   - smoothly fade between colors")
-    print("  rainbow/spectrum [circular/hasselhoff] - show rainbow")
-    print("  kit/knight/hasselhoff                  - K.I.T. from 'Knight Rider'")
-    print("  countdown SECONDS [red] [green] [blue] - fancy countdown")
-#    print("  speedtest                              - test connection speed")
+    print("  off                                     - disable all LEDs")
+    print("  color/colour/rgb [red] [green] [blue]   - set color")
+    print("  hsi/hsl [hue] [saturation] [luminosity] - set color")
+    print("  white [brightness]                      - light all leds with white color")
+    print("  led POS [red] [green] [blue]            - light one led at POSition")
+    print("  avg/mean                                - screen average color")
+    print("  edge/movie                              - screen edge color (ambilight)")
+    print("  fade                                    - smoothly fade between colors")
+    print("  sun [rise time]                         - imitate raising sun")
+    print("  rainbow/spectrum [circular/hasselhoff]  - show rainbow")
+    print("  kit/knight/hasselhoff                   - K.I.T. from 'Knight Rider'")
+    print("  countdown SECONDS [red] [green] [blue]  - fancy countdown")
+#    print("  speedtest                               - test connection speed")
 
